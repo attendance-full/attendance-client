@@ -6,7 +6,8 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
-import { actions as loadingActions } from '../app';
+import { actions as appActions } from '../app';
+import { actions as loginActions } from './index';
 
 class Login extends Component {
 
@@ -14,24 +15,19 @@ class Login extends Component {
 		this.setState({ username: '', password: '' });
 	}
 
-	handleSubmit (e) {
-		console.log('123546')
-		this.props.startLoading();
-		// fetch(buildUrl('/chanpin/jichu/yonghu/denglu.action'), options)
-		// 	.then(response => {
-		// 		// if (response.state == '1') {
-		// 		})
-		// 	.catch();
-	}
-
-	onFormValueChange(key, value) {
-		var newState = this.state;
-		newState[key] = value;
-		this.setState(newState);
+	handleSubmit() {
+		this.props.showMessage(11111);
+		this.props.history.push({pathname: '/dashboard'});
 	}
 
 	render() {
-		const { username, password } = this.state;
+		const {
+			username,
+			password,
+			valueChange
+		} = this.props;
+		console.log(username);
+
 		return (
 			<div className='login'>
 				<h3 className='title'>系统登录</h3>
@@ -39,12 +35,16 @@ class Login extends Component {
 					zDepth={2}>
 					<div>
 						<TextField
+							value={username}
+							onChange={(e) => valueChange('username', e.target.value)}
 				      hintText="请输入账户"
 				      floatingLabelText="账户"
 				      fullWidth />
 				  </div>
 				  <div>
 						<TextField
+							value={password}
+							onChange={(e) => valueChange('password', e.target.value)}
 				      hintText="请输入密码"
 				      floatingLabelText="密码"
 				      type='password'
@@ -62,17 +62,25 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-	startLoading: React.PropTypes.func
+	username: React.PropTypes.string,
+	password: React.PropTypes.string,
+	startLoading: React.PropTypes.func,
+	stopLoading: React.PropTypes.func,
+	showMessage: React.PropTypes.func,
+	valueChange: React.PropTypes.func
 }
 
 const mapStateToProps = (state) => {
-  return {}
+  return Object.assign({}, state.login);
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-  	startLoading: () => {dispatch(loadingActions.startLoading())}
+  	startLoading: () => dispatch(appActions.startLoading()),
+  	stopLoading: () => dispatch(appActions.stopLoading()),
+  	showMessage: (message) => dispatch(appActions.showMessage(message)),
+  	valueChange: (key, value) => dispatch(loginActions.valueChange(key, value))
   }
-};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

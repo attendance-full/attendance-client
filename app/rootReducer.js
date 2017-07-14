@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import { reducer as loadingReducer } from './containers/app';
+import { reducer as app } from './containers/app';
+import { reducer as login } from './containers/login';
 
 const rootReducer = combineReducers({
-	loadingReducer
+	app,
+	login
 });
 
 export default rootReducer;

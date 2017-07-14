@@ -1,11 +1,16 @@
+import './app.less';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {
   Route
 } from 'react-router-dom';
-import Login from '../login/login';
+import { Login } from '../login';
+import { Dashboard } from '../dashboard';
 import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
+import Snackbar from 'material-ui/Snackbar';
+import { actions as appActions } from './index';
+import CircularProgress from 'material-ui/CircularProgress';
 
 
 class App extends Component {
@@ -13,26 +18,52 @@ class App extends Component {
     super(props);
   }
 
+  handleRequestClose() {
+
+  }
+
   render() {
-    var loading = null;
-    if (this.props.loading) {
-      loading = <div className='loading_container'>123</div>;
+    const {
+      open,
+      loading,
+      message,
+      dismissMessage
+    } = this.props;
+    var loadingPanel = null;
+    if (loading) {
+      loadingPanel = <div className='loading_container'>
+        <CircularProgress className='loading_icon' size={80} thickness={5} />
+      </div>;
     }
     return (
       <div>
-        {loading}
+        {loadingPanel}
+        <Snackbar
+          open={open}
+          message={message}
+          autoHideDuration={2000}
+          onRequestClose={() => dismissMessage()}
+        />
         <Route exact path="/" component={Login} />
+        <Route path="/dashboard" component={Dashboard} />
       </div>
     );
   }
 }
 
 App.propTypes = {
-  loading: React.PropTypes.bool
+  loading: React.PropTypes.bool,
+  dismissMessage: React.PropTypes.func
 }
 
 const mapStateToProps = (state) => {
-  return state.loading;
+  return Object.assign({}, state.app);
 }
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dismissMessage: (message) => dispatch(appActions.dismissMessage(message))
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
