@@ -20,7 +20,6 @@ module.exports = {//注意这里是exports不是export
       },
       {
         test: /\.less$/,
-        exclude: /node_modules/,
         loader: 'style-loader!css-loader!less-loader'
       }
     ]

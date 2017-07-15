@@ -1,4 +1,4 @@
-import './Login.less';
+import './login.less';
 import React, { Component } from 'react';
 import { fetch, buildUrl } from '../../components/api/Api';
 import Paper from 'material-ui/Paper';
