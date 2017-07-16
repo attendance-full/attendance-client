@@ -2,7 +2,7 @@ import invariant from 'invariant';
 import isomorphicFetch from 'isomorphic-fetch';
 import is from 'is_js';
 
-export const buildUrl = (path) => 'http://120.25.255.23:8080/zytech' + path;
+export const buildUrl = (path) => 'http://localhost:7001/api' + path;
 
 class FetchTimedOutError extends Error { }
 

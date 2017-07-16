@@ -16,8 +16,39 @@ class Login extends Component {
 	}
 
 	handleSubmit() {
-		this.props.showMessage(11111);
-		this.props.history.push({pathname: '/dashboard'});
+		const {
+			username,
+			password,
+			startLoading,
+			stopLoading,
+			history,
+			showMessage,
+			valueChange
+		} = this.props;
+		startLoading();
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				phone: username,
+				password
+			}),
+		}
+		fetch(buildUrl('/login'), options)
+			.then(response => {
+				stopLoading();
+				if (response.code == '200') {
+					valueChange('password', '');
+					history.push({pathname: '/dashboard'});
+				} else {
+					showMessage(response.message);
+				}
+			})
+			.catch(() => {
+				stopLoading();
+			});
 	}
 
 	render() {
@@ -26,7 +57,6 @@ class Login extends Component {
 			password,
 			valueChange
 		} = this.props;
-		console.log(username);
 
 		return (
 			<div className='login'>
@@ -67,7 +97,8 @@ Login.propTypes = {
 	startLoading: React.PropTypes.func,
 	stopLoading: React.PropTypes.func,
 	showMessage: React.PropTypes.func,
-	valueChange: React.PropTypes.func
+	valueChange: React.PropTypes.func,
+	login: React.PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
@@ -79,7 +110,8 @@ const mapDispatchToProps = (dispatch) => {
   	startLoading: () => dispatch(appActions.startLoading()),
   	stopLoading: () => dispatch(appActions.stopLoading()),
   	showMessage: (message) => dispatch(appActions.showMessage(message)),
-  	valueChange: (key, value) => dispatch(loginActions.valueChange(key, value))
+  	valueChange: (key, value) => dispatch(loginActions.valueChange(key, value)),
+  	login: (username, password) => dispatch(loginActions.login(username, password))
   }
 }
 

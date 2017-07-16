@@ -14,6 +14,10 @@ import { EmployeeList } from  './employee/employee_list';
 import { EmployeeView } from  './employee/employee_view';
 import { EmployeeEdit } from  './employee/employee_edit';
 import Paper from 'material-ui/Paper';
+import { actions as appActions } from '../app';
+import { bindActionCreators } from 'redux';
+import { connect} from 'react-redux';
+import { fetch, buildUrl } from '../../components/api/Api';
 
 class Dashboard extends Component {
 
@@ -21,6 +25,33 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {open: false};
+  }
+
+  logout() {
+  	const {
+  		startLoading,
+  		stopLoading,
+  		showMessage
+  	} = this.props;
+
+  	startLoading();
+  	const options = {
+			method: 'GET',
+			credentials: 'include',
+		}
+		fetch(buildUrl('/logout'), options)
+			.then(response => {
+				stopLoading();
+				if (response.code == '200') {
+					valueChange('password', '');
+					history.push({pathname: '/'});
+				} else {
+					showMessage(response.message);
+				}
+			})
+			.catch(() => {
+				stopLoading();
+			});
   }
 
 	renderRightElement() {
@@ -31,9 +62,7 @@ class Dashboard extends Component {
 		    targetOrigin={{horizontal: 'right', vertical: 'top'}}
 		    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
 		  >
-		    <MenuItem primaryText="Refresh" />
-		    <MenuItem primaryText="Help" />
-		    <MenuItem primaryText="Sign out" />
+		    <MenuItem onTouchTap={() => this.logout() } primaryText="登出" />
 	  </IconMenu>
 	}
 
@@ -75,4 +104,22 @@ class Dashboard extends Component {
 	}
 }
 
-export default Dashboard;
+Dashboard.propTypes = {
+	startLoading: React.PropTypes.func,
+	stopLoading: React.PropTypes.func,
+	showMessage: React.PropTypes.func,
+}
+
+const mapStateToProps = (state) => {
+  return {};
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+  	startLoading: () => dispatch(appActions.startLoading()),
+  	stopLoading: () => dispatch(appActions.stopLoading()),
+  	showMessage: (message) => dispatch(appActions.showMessage(message)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
