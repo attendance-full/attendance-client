@@ -6,6 +6,8 @@ import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import { actions as editActions } from './index';
+import { actions as appActions } from '../../../app';
 
 const items = [
   <MenuItem key={1} value={null} primaryText="" />,
@@ -24,11 +26,10 @@ class EmployeeEdit extends Component {
 		const {
 			username,
 			phone,
-			roleId,
-			address,
-			usernameError,
-			phoneError,
-			roleIdError
+			gradeId,
+			classId,
+			studentId,
+			valueChange
 		} = this.props;
 
 		return <Card style={{width: '500px', margin: 'auto', padding: '40px 20px'}}>
@@ -38,27 +39,39 @@ class EmployeeEdit extends Component {
 		      hintText='请输入姓名'
 		      floatingLabelText='姓名'
 		      value={username}
+		      onChange={(e) => valueChange('username', e.target.value)}
 		      fullWidth
 		    /><br />
 		    <TextField
 		      hintText='请输入手机号'
 		      floatingLabelText='手机号'
+		      value={phone}
+		      onChange={(e) => valueChange('phone', e.target.value)}
 		      fullWidth
 		    /><br />
-		    <SelectField
-          value={null}
-          onChange={this.handleChange}
-          floatingLabelText="角色"
+        <SelectField
+          value={gradeId}
+          onChange={(e) => valueChange('gradeId', e.target.value)}
+          floatingLabelText="年级"
           fullWidth
         >
           {items}
         </SelectField>
-		    <TextField
-		      hintText='请输入地址'
-		      floatingLabelText='地址'
-		      multiLine={true}
+        <SelectField
+          value={classId}
+          onChange={(e) => valueChange('classId', e.target.value)}
+          floatingLabelText="班级"
+          fullWidth
+        >
+          {items}
+        </SelectField>
+        <TextField
+		      hintText='请输入学号'
+		      floatingLabelText='学号'
+		      value={studentId}
+		      onChange={(e) => valueChange('studentId', e.target.value)}
 		      fullWidth
-		    />
+		    /><br />
 	    </CardText>
 	    <CardActions style={{margin: 'auto', paddingBottom: '20px'}}>
 	    	<RaisedButton label="提交" primary />
@@ -71,11 +84,10 @@ class EmployeeEdit extends Component {
 EmployeeEdit.propTypes = {
 	username: React.PropTypes.string,
 	phone: React.PropTypes.string,
-	roleId: React.PropTypes.string,
-	address: React.PropTypes.string,
-	usernameError: React.PropTypes.string,
-	phoneError: React.PropTypes.string,
-	roleIdError: React.PropTypes.string,
+	gradeId: React.PropTypes.string,
+	classId: React.PropTypes.string,
+	studentId: React.PropTypes.string,
+	valueChange: React.PropTypes.func
 }
 
 const mapStateToProps = (state) => {
@@ -83,7 +95,12 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {}
+  return {
+  	startLoading: () => dispatch(appActions.startLoading()),
+  	stopLoading: () => dispatch(appActions.stopLoading()),
+  	showMessage: (message) => dispatch(appActions.showMessage(message)),
+  	valueChange: (key, value) => dispatch(editActions.valueChange(key, value)),
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmployeeEdit);
