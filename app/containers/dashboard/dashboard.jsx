@@ -13,11 +13,13 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import { EmployeeList } from  './employee/employee_list';
 import { EmployeeView } from  './employee/employee_view';
 import { EmployeeEdit } from  './employee/employee_edit';
+import { RecordList } from  './record/record_list';
 import Paper from 'material-ui/Paper';
 import { actions as appActions } from '../app';
 import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
 import { fetch, buildUrl } from '../../components/api/Api';
+import DatePicker from 'material-ui/DatePicker';
 
 class Dashboard extends Component {
 
@@ -93,12 +95,15 @@ class Dashboard extends Component {
         	onTouchTap={() => history.push({pathname: `${match.path}`})} />
         <MenuItem primaryText='create'
         	innerDivStyle={{marginLeft: '20px'}}
-        	onTouchTap={() => history.push({pathname: `${match.path}/employee-edit/1`})} />
+        	onTouchTap={() => history.push({pathname: `${match.path}/employee-edit/-1`})} />
+        <MenuItem primaryText='record'
+        	onTouchTap={() => history.push({pathname: `${match.path}/record-list`})} />
       </Drawer>
       <div className='dashboard_container'>
       	<Route exact path={match.path} component={EmployeeList} />
       	<Route path={`${match.path}/employee-view`} component={EmployeeView} />
       	<Route path={`${match.path}/employee-edit/:id`} component={EmployeeEdit} />
+      	<Route path={`${match.path}/record-list`} component={RecordList} />
       </div>
 		</div>
 	}

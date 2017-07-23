@@ -1,13 +1,15 @@
 import {
-	EMPLOYEE_EDIT_VALUE_CHANGE
+	EMPLOYEE_EDIT_VALUE_CHANGE,
+	CLEAR_EDIT_EMPLOYEE_PAGE,
+	INIT_EDIT_INFO_ACTION
 } from './actions';
 
 const defaultState = {
 	username: '',
 	phone: '',
-	gradeid: '',
-	classId: '',
-	studentId: '',
+	gradeId: 1,
+	classId: 1,
+	rfid: ''
 }
 
 export default (state = defaultState, action) => {
@@ -17,6 +19,22 @@ export default (state = defaultState, action) => {
 			newState[action.key] = action.value;
 			return Object.assign({}, state, newState);
 		}
+		case CLEAR_EDIT_EMPLOYEE_PAGE:
+			return Object.assign({}, state, {
+				username: '',
+				phone: '',
+				gradeId: 1,
+				classId: 1,
+				rfid: ''
+			});
+		case INIT_EDIT_INFO_ACTION:
+			return Object.assign({}, state, {
+				username: action.info.name,
+				phone: action.info.phone,
+				gradeId: action.info.gradeId,
+				classId: action.info.classId,
+				rfid: action.info.RFID
+			});
 		default:
 			return state;
 	}
