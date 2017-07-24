@@ -7,7 +7,8 @@ var path = require('path');
 module.exports = {//注意这里是exports不是export
     entry: {
         app: ['babel-polyfill', __dirname + "/app/main.js"],
-        vendor: ['react', 'react-dom', 'react-router-dom', 'react-router', 'history'] //提取react模块作为公共的js文件
+        vendor: ['react', 'react-dom', 'react-router-dom',
+            'react-router', 'history', 'react-redux', 'redux', 'redux-thunk'] //提取react模块作为公共的js文件
     },//唯一入口文件
     output: {//输出目录
         path: __dirname + "/build",//打包后的js文件存放的地方
@@ -25,8 +26,8 @@ module.exports = {//注意这里是exports不是export
                 loader: 'babel-loader'//loader的名称（必须）
             },
             {
-                test: /\.css$/,
-                loader: "style-loader!css-loader?modules"
+                test: /\.less$/,
+                loader: 'style-loader!css-loader!less-loader'
             }
         ]
     },
@@ -42,14 +43,14 @@ module.exports = {//注意这里是exports不是export
         new webpack.optimize.CommonsChunkPlugin({
             names: ['vendor'],
             filename: 'vendor.js'
+        }),
+        new CompressionPlugin({
+            asset: "[path].gz[query]",
+            algorithm: "gzip",
+            test: /\.js$|\.css$|\.html$/,
+            threshold: 10240,
+            minRatio: 0.8
         })
-        // new CompressionPlugin({
-        //     asset: "[path].gz[query]",
-        //     algorithm: "gzip",
-        //     test: /\.js$|\.css$|\.html$/,
-        //     threshold: 10240,
-        //     minRatio: 0.8
-        // })
     ],
 
     resolve: {
