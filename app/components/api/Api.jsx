@@ -1,8 +1,9 @@
 import invariant from 'invariant';
 import isomorphicFetch from 'isomorphic-fetch';
 import is from 'is_js';
+import config from '../../config';
 
-export const buildUrl = (path) => 'http://localhost:7001/api' + path;
+export const buildUrl = (path) => config.serviceUrl + path;
 
 class FetchTimedOutError extends Error { }
 

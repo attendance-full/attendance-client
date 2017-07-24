@@ -91,7 +91,7 @@ class EmployeeEdit extends Component {
 				if (response.code == '200') {
 					showMessage('创建成功');
 					clearEditPage();
-					history.push({pathname: '/dashboard'});
+					history.push({pathname: '/dashboard/employee-list'});
 				} else {
 					showMessage(response.message);
 				}

@@ -9,6 +9,7 @@ import {
   TableHeaderColumn,
   TableRow,
   TableRowColumn,
+  TableFooter
 } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -16,6 +17,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { actions as appActions } from '../../../app';
+import Pagination from '../../../../components/pagination';
 import DatePicker from 'material-ui/DatePicker';
 import { serverDateToDate, serverDateToDateTime } from '../../../../utils/utils';
 import { fetch, buildUrl } from '../../../../components/api/Api';
@@ -27,10 +29,17 @@ DateTimeFormat = global.Intl.DateTimeFormat;
 class RecordList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { startDate: '', endDate: '', name: '', phone: '', gradeId: '', classId: '', page: 1, list: [] };
+		const {query} = props.location;
+		var phone = ''
+		if (query && query.phone) {
+			phone = query.phone;
+		}
+		console.log(phone);
+		this.state = { startDate: '', endDate: '', name: '', phone, gradeId: '', classId: '', page: 1, list: [], totalCount: 0 };
 	}
 
 	componentDidMount() {
+		this.query();
 	}
 
 	query() {
@@ -58,7 +67,7 @@ class RecordList extends Component {
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {
-					this.setState({ list: response.data.list });
+					this.setState({ list: response.data.list, totalCount: response.data.totalCount });
 				} else {
 					showMessage(response.message);
 				}
@@ -79,8 +88,14 @@ class RecordList extends Component {
 		return classes;
 	}
 
+	pageChanged(page) {
+		this.setState({ page }, () => {
+			this.query();
+		});
+	}
+
 	render() {
-		const { name, phone, gradeId, classId, list } = this.state;
+		const { name, phone, gradeId, classId, list, totalCount, page } = this.state;
 		const { grade } = this.props;
 
 		const classes = this.getClasses(gradeId);	
@@ -137,6 +152,7 @@ class RecordList extends Component {
 								<TextField
 						      hintText='请输入学号'
 						      floatingLabelText='学号'
+						      value={phone}
 						      onChange={(e) => this.setState({ phone: e.target.value })}
 						      fullWidth
 						    />
@@ -213,6 +229,12 @@ class RecordList extends Component {
 				    })
 			    }
 			    </TableBody>
+			    <TableFooter>
+			    	<Pagination totalCount={totalCount}
+			    		pageSize={pageSize}
+			    		currentPage={page}
+			    		pageChanged={(page) => this.pageChanged(page)}/>
+			    </TableFooter>
 			  </Table>
 			</Paper>
 		</div>

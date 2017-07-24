@@ -55,7 +55,7 @@ class App extends Component {
     } = this.props;
     var loadingPanel = null;
     if (loading) {
-      loadingPanel = <div className='loading_container'>
+      loadingPanel = <div className='loading_container' style={{zIndex: '2000'}}>
         <CircularProgress className='loading_icon' size={80} thickness={5} />
       </div>;
     }

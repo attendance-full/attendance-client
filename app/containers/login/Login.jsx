@@ -32,7 +32,7 @@ class Login extends Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				username,
+				phone: username,
 				password
 			}),
 		}
@@ -41,7 +41,7 @@ class Login extends Component {
 				stopLoading();
 				if (response.code == '200') {
 					valueChange('password', '');
-					history.push({pathname: '/dashboard'});
+					history.push({pathname: '/dashboard/employee-list'});
 				} else {
 					showMessage(response.message);
 				}

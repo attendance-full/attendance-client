@@ -72,6 +72,13 @@ class Dashboard extends Component {
 		this.setState({open: !this.state.open});
 	}
 
+	checkActive(url) {
+		if (this.props.location.pathname.indexOf(url) >= 0) {
+			return { background: 'antiquewhite' }
+		}
+		return {};
+	}
+
 	render() {
 		const { open } = this.state;
 		const { history, match } = this.props;
@@ -91,16 +98,18 @@ class Dashboard extends Component {
 	      <div className='menu_title'>
 	      	标题
 	      </div>
-        <MenuItem primaryText='employee'
-        	onTouchTap={() => history.push({pathname: `${match.path}`})} />
-        <MenuItem primaryText='create'
-        	innerDivStyle={{marginLeft: '20px'}}
+        <MenuItem primaryText='人员'
+        	innerDivStyle={this.checkActive('/employee-list')}
+        	onTouchTap={() => history.push({pathname: `${match.path}/employee-list`})} />
+        <MenuItem primaryText='创建/修改'
+        	innerDivStyle={Object.assign({}, {paddingLeft: '40px'}, this.checkActive('/employee-edit'))}
         	onTouchTap={() => history.push({pathname: `${match.path}/employee-edit/-1`})} />
-        <MenuItem primaryText='record'
+        <MenuItem primaryText='记录'
+        	innerDivStyle={this.checkActive('/record-list')}
         	onTouchTap={() => history.push({pathname: `${match.path}/record-list`})} />
       </Drawer>
       <div className='dashboard_container'>
-      	<Route exact path={match.path} component={EmployeeList} />
+      	<Route exact path={`${match.path}/employee-list`} component={EmployeeList} />
       	<Route path={`${match.path}/employee-view`} component={EmployeeView} />
       	<Route path={`${match.path}/employee-edit/:id`} component={EmployeeEdit} />
       	<Route path={`${match.path}/record-list`} component={RecordList} />

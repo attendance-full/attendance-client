@@ -9,7 +9,9 @@ import {
   TableHeaderColumn,
   TableRow,
   TableRowColumn,
+  TableFooter,
 } from 'material-ui/Table';
+import Pagination from '../../../../components/pagination';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -23,11 +25,11 @@ const pageSize = 20;
 class EmployeeList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { name: '', phone: '', gradeId: '', classId: '', page: 1, list: [] };
+		this.state = { name: '', phone: '', gradeId: '', classId: '', page: 1, list: [], totalCount: 0 };
 	}
 
 	componentDidMount() {
-
+		this.query();
 	}
 
 	query() {
@@ -53,7 +55,7 @@ class EmployeeList extends Component {
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {
-					this.setState({ list: response.data.list });
+					this.setState({ list: response.data.list, totalCount: response.data.totalCount });
 				} else {
 					showMessage(response.message);
 				}
@@ -74,8 +76,31 @@ class EmployeeList extends Component {
 		return classes;
 	}
 
+	pageChanged(page) {
+		this.setState({ page }, () => {
+			this.query();
+		});
+	}
+
+	jumpToRecordList(item) {
+		this.props.history.push({pathname: '/dashboard/record-list',
+			query: {
+				phone: item.phone,
+			}
+		});
+
+	}
+
+	eidtEmployee(item) {
+		this.props.history.push({pathname: `/dashboard/employee-edit/${item.id}`});
+	}
+
+	deleteEmployee(item) {
+
+	}
+
 	render() {
-		const { name, phone, gradeId, classId, list } = this.state;
+		const { name, phone, gradeId, classId, list, totalCount, page } = this.state;
 		const { grade } = this.props;
 
 		const classes = this.getClasses(gradeId);	
@@ -140,12 +165,13 @@ class EmployeeList extends Component {
 					onTouchTap={() => this.query()}/>
 			</Paper>
 			<Paper style={{marginTop: '20px'}}>
-				<Table>
+				<Table selectable={false}>
 			    <TableHeader>
 			      <TableRow>
 			        <TableHeaderColumn>姓名</TableHeaderColumn>
 			        <TableHeaderColumn>学号</TableHeaderColumn>
 			        <TableHeaderColumn>班级</TableHeaderColumn>
+			        <TableHeaderColumn></TableHeaderColumn>
 			      </TableRow>
 			    </TableHeader>
 			    <TableBody>
@@ -168,10 +194,24 @@ class EmployeeList extends Component {
 				        <TableRowColumn>{item.name}</TableRowColumn>
 				        <TableRowColumn>{item.phone}</TableRowColumn>
 				        <TableRowColumn>{displayed}</TableRowColumn>
+				        <TableRowColumn>
+				        	<RaisedButton label="记录" primary
+				        		onTouchTap={() => this.jumpToRecordList(item)}/>
+				        	<RaisedButton label="修改" primary style={{marginLeft: '10px'}}
+				        		onTouchTap={() => this.eidtEmployee(item)} />
+				        	<RaisedButton label="删除" primary style={{marginLeft: '10px'}}
+				        		onTouchTap={() => this.deleteEmployee(item)}/>
+				        </TableRowColumn>
 				      </TableRow>
 				    })
 			    }
 			    </TableBody>
+			    <TableFooter>
+			    	<Pagination totalCount={totalCount}
+			    		pageSize={pageSize}
+			    		currentPage={page}
+			    		pageChanged={(page) => this.pageChanged(page)}/>
+			    </TableFooter>
 			  </Table>
 			</Paper>
 		</div>
