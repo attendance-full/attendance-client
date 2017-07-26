@@ -4,10 +4,16 @@ var webpack = require('webpack');//引入Webpack模块供我们调用，这里�
 //__dirname是node.js中的一个全局变量，它指向当前执行脚本所在的目录
 module.exports = {//注意这里是exports不是export
 	devtool: 'eval-source-map',//生成Source Maps,这里选择eval-source-map
-  entry: ['babel-polyfill', 'webpack/hot/dev-server', __dirname + '/app/main.js'],//唯一入口文件，就像Java中的main方法
+  entry: {
+      app: ['babel-polyfill', __dirname + "/app/main.js"],
+      vendor: ['react', 'react-dom', 'react-router-dom',
+          'react-router', 'history', 'react-redux', 'redux', 'redux-thunk'] //提取react模块作为公共的js文件
+  },//唯一入口文件
   output: {//输出目录
-    path: __dirname + "/build",//打包后的js文件存放的地方
-    filename: "bundle.js"//打包后的js文件名
+      path: __dirname + "/build",//打包后的js文件存放的地方
+      publicPath: '/',
+      filename: '[name].js', //注意这里，用[name]可以自动生成路由名称对应的js文件
+      chunkFilename: '[name].js' //注意这里，用[name]可以自动生成路由名称对应的js文件
   },
 
   module: {
@@ -27,6 +33,10 @@ module.exports = {//注意这里是exports不是export
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),//热模块替换插件
+    new webpack.optimize.CommonsChunkPlugin({
+        names: ['vendor'],
+        filename: 'vendor.js'
+    }),
   ],
 
   //webpack-dev-server配置

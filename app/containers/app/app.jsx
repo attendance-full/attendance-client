@@ -5,6 +5,7 @@ import {
   Route
 } from 'react-router-dom';
 import { Login } from '../login';
+import Oauth from '../oauth';
 import { Dashboard } from '../dashboard';
 import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
@@ -70,6 +71,7 @@ class App extends Component {
         />
         <Route exact path="/" component={Login} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/oauth" component={Oauth} />
       </div>
     );
   }
