@@ -11,7 +11,7 @@ class Oauth extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { 
-			employee: {},
+			employee: { observer: [] },
 			wechat: {},
 			isLoadingEmployee: false,
 			isLoadingWechat: false,
@@ -35,34 +35,47 @@ class Oauth extends Component {
 			fetch(buildUrl(`/employee/${state}`), {method: 'GET'})
 				.then((response) => {
 					if (response.code == 200) {
-						this.setState({ employee: response.data, isLoadingEmployee: false });
+						this.setState({ employee: response.data, isLoadingEmployee: false }, ()=> this.checkEmployeeBind());
 					} else {
-						this.setState({ isLoadingEmployee: false });
+						this.setState({ isLoadingEmployee: false }, ()=> this.checkEmployeeBind());
 						showMessage(response.message);
 					}
 				})
 				.catch(() => {
-					this.setState({ isLoadingEmployee: false });
+					this.setState({ isLoadingEmployee: false }, ()=> this.checkEmployeeBind());
 				})
 
 			fetch(buildUrl(`/wechat/oauth?code=${code}`), {method: 'GET'})
 				.then((response) => {
 					if (response.code == 200) {
-						this.setState({ wechat: response.data, isLoadingWechat: false });
+						this.setState({ wechat: response.data, isLoadingWechat: false }, ()=> this.checkEmployeeBind());
 					} else {
 						showMessage(response.message);
-						this.setState({ isLoadingWechat: false });
+						this.setState({ isLoadingWechat: false }, ()=> this.checkEmployeeBind());
 					}
 				})
 				.catch(() => {
-					this.setState({ isLoadingWechat: false });
+					this.setState({ isLoadingWechat: false }, ()=> this.checkEmployeeBind());
 				})
+		}
+	}
+
+	checkEmployeeBind() {
+		const { isLoadingEmployee, isLoadingWechat, employee, wechat } = this.state;
+		const { stopLoading } = this.props;
+		if (!isLoadingWechat && !isLoadingEmployee) {
+			stopLoading();
+			const result = employee.observer.filter((item) => item.openId == wechat.openId);
+			if (result.length > 0) {
+				this.setState({ bindSuc: true });
+			}
 		}
 	}
 
 	bind() {
 		const { employee, wechat } = this.state;
 		const { startLoading, showMessage, stopLoading } = this.props;
+		wechat.employeeId = employee.id;
 		startLoading();
 		const options = {
 			method: 'POST',
@@ -70,14 +83,13 @@ class Oauth extends Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				employeeId: employeeId,
-				wechat: wechat,
+				wechat: wechat
 			}),
 		}
 		fetch(buildUrl(`/wechat/bind`), options)
 			.then((response) => {
 				if (response.code == 200) {
-					this.setState({bindUser: response.data, bindSuc: true});
+					this.setState({ indSuc: true });
 				} else {
 					showMessage(response.message);
 					this.setState({ isLoadingWechat: false });
@@ -89,11 +101,15 @@ class Oauth extends Component {
 	}
 
 	render() {
-		const { employee, wechat, isLoadingEmployee, isLoadingWechat, bindSuc, bindUser } = this.state;
-		const { stopLoading } = this.props;
-		if (!isLoadingWechat && !isLoadingEmployee) {
-			stopLoading();
+		const { employee, wechat, isLoadingEmployee, isLoadingWechat, bindSuc } = this.state;
+		var bindUser = '';
+		var remark = '';
+		employee.observer.map((item) => bindUser += item.nickname + ',');
+		if (bindUser.length > 0) {
+			bindUser = bindUser.substring(0, bindUser.length - 1);
+			remark = `订阅改学生信息还有${bindUser}。`
 		}
+
 		return <Card style={{margin:'20px'}}>
 			<CardHeader
 	      title={wechat.nickname}
@@ -103,7 +119,7 @@ class Oauth extends Component {
 				bindSuc ? 
 				<div>
 					<CardText>
-			      {`恭喜您，已订阅${employee.name}的进出学校信息，订阅改学生信息还有${bindUser}。`}
+			      {`恭喜您，已订阅${employee.name}的进出学校信息。${remark}`}
 			    </CardText>
 				</div>
 				:
