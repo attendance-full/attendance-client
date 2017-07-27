@@ -11,8 +11,13 @@ class Oauth extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { 
+<<<<<<< HEAD
 			employee: { observer: [] },
 			wechat: {},
+=======
+			employee: {},
+			wechat: {"openid":"oFX9X0R8Cv0EMDKMPQ-XKZSeQFtE","nickname":"。","sex":1,"language":"zh_CN","city":"徐州","province":"江苏","country":"中国","headimgurl":"http://wx.qlogo.cn/mmopen/xPaxVAhWnBlLL7eOaUJd2aq3kT5GKv6qM2nicgnlxL7lP8xwE0JeRcd4BZdu8geh299tVXy0eURUbGp2cWwX0CUHF7bR5q9AM/0","privilege":[]},
+>>>>>>> 905a44acc509d5b240915463fb9d0af8826b6ae9
 			isLoadingEmployee: false,
 			isLoadingWechat: false,
 			bindUser: '',
@@ -82,9 +87,13 @@ class Oauth extends Component {
 			headers: {
 				'Content-Type': 'application/json'
 			},
+<<<<<<< HEAD
 			body: JSON.stringify({
 				wechat: wechat
 			}),
+=======
+			body: JSON.stringify(wechat),
+>>>>>>> 905a44acc509d5b240915463fb9d0af8826b6ae9
 		}
 		fetch(buildUrl(`/wechat/bind`), options)
 			.then((response) => {
