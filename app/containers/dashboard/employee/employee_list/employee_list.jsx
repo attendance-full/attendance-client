@@ -14,18 +14,36 @@ import {
 import Pagination from '../../../../components/pagination';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Popover from 'material-ui/Popover/Popover';
 import { actions as appActions } from '../../../app';
 import { fetch, buildUrl } from '../../../../components/api/Api';
+import { renderQrUrl } from '../../../../utils/utils';
+import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import ModeEditIcon from 'material-ui/svg-icons/editor/mode-edit';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import CodeIcon from 'material-ui/svg-icons/action/code';
+import ViewListIcon from 'material-ui/svg-icons/action/view-list';
 
 const pageSize = 20;
 
 class EmployeeList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { name: '', phone: '', gradeId: '', classId: '', page: 1, list: [], totalCount: 0 };
+		this.state = {
+			name: '',
+			phone: '',
+			gradeId: '',
+			classId: '',
+			page: 1,
+			list: [],
+			totalCount: 0,
+			qrCode: '',
+			open: false,
+			anchor: null,
+		};
 	}
 
 	componentDidMount() {
@@ -92,6 +110,7 @@ class EmployeeList extends Component {
 	}
 
 	eidtEmployee(item) {
+		console.log(item);
 		this.props.history.push({pathname: `/dashboard/employee-edit/${item.id}`});
 	}
 
@@ -99,8 +118,23 @@ class EmployeeList extends Component {
 
 	}
 
+	showQRcode(item, event) {
+		event.preventDefault();
+    this.setState({
+      open: true,
+      anchor: event.currentTarget,
+      qrCode: renderQrUrl(item)
+    });
+	}
+
+	handleRequestClose() {
+		this.setState({
+      open: false,
+    });
+	}
+
 	render() {
-		const { name, phone, gradeId, classId, list, totalCount, page } = this.state;
+		const { name, phone, gradeId, classId, list, totalCount, page, open, qrCode, anchor } = this.state;
 		const { grade } = this.props;
 
 		const classes = this.getClasses(gradeId);	
@@ -194,13 +228,25 @@ class EmployeeList extends Component {
 				        <TableRowColumn>{item.name}</TableRowColumn>
 				        <TableRowColumn>{item.phone}</TableRowColumn>
 				        <TableRowColumn>{displayed}</TableRowColumn>
-				        <TableRowColumn>
-				        	<RaisedButton label="记录" primary
-				        		onTouchTap={() => this.jumpToRecordList(item)}/>
-				        	<RaisedButton label="修改" primary style={{marginLeft: '10px'}}
-				        		onTouchTap={() => this.eidtEmployee(item)} />
-				        	<RaisedButton label="删除" primary style={{marginLeft: '10px'}}
-				        		onTouchTap={() => this.deleteEmployee(item)}/>
+				        <TableRowColumn style={{overflow: 'none'}}>
+					        <IconButton tooltip="查看记录"
+					        	tooltipPosition="bottom-left"
+					        	onTouchTap={() => this.jumpToRecordList(item)}>
+							      <ViewListIcon />
+							    </IconButton>
+							    <IconButton tooltip="修改信息"
+							    	onTouchTap={() => this.eidtEmployee(item)}>
+							      <ModeEditIcon />
+							    </IconButton>
+							    <IconButton tooltip="删除信息"
+							    	tooltipStyles={{zIndex: '2000'}}
+							    	onTouchTap={() => this.deleteEmployee(item)}>
+							      <DeleteIcon />
+							    </IconButton>
+							    <IconButton tooltip="查看二维码"
+							    	onTouchTap={(event) => this.showQRcode(item, event)}>
+							      <CodeIcon />
+							    </IconButton>
 				        </TableRowColumn>
 				      </TableRow>
 				    })
@@ -213,6 +259,13 @@ class EmployeeList extends Component {
 			    		pageChanged={(page) => this.pageChanged(page)}/>
 			    </TableFooter>
 			  </Table>
+			  <Popover
+          open={open}
+          anchorEl={anchor}
+          onRequestClose={() => this.handleRequestClose()}
+        >
+        	<a href={qrCode} download><img src={qrCode} /></a>
+        </Popover>
 			</Paper>
 		</div>
 	}
