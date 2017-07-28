@@ -32,8 +32,8 @@ export const urlSearchData = (searchString) => {
 };
 
 export const renderQrUrl = (item) => {
-	if (item && item.phone) {
-		return `${config.serverRootUrl}/qrimage/${item.phone}.png`;
+	if (item && item.id) {
+		return `${config.serverRootUrl}/qrimage/${item.id}.png`;
 	}
 	return '';
 }

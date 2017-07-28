@@ -26,6 +26,8 @@ import ModeEditIcon from 'material-ui/svg-icons/editor/mode-edit';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import CodeIcon from 'material-ui/svg-icons/action/code';
 import ViewListIcon from 'material-ui/svg-icons/action/view-list';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 const pageSize = 20;
 
@@ -43,6 +45,7 @@ class EmployeeList extends Component {
 			qrCode: '',
 			open: false,
 			anchor: null,
+			selectItem: null
 		};
 	}
 
@@ -52,7 +55,7 @@ class EmployeeList extends Component {
 
 	query() {
 		const { name, phone, gradeId, classId, page } = this.state;
-		const { startLoading, stopLoading } = this.props;
+		const { startLoading, stopLoading, showMessage } = this.props;
 
 		const options = {
 			method: 'POST',
@@ -110,12 +113,28 @@ class EmployeeList extends Component {
 	}
 
 	eidtEmployee(item) {
-		console.log(item);
 		this.props.history.push({pathname: `/dashboard/employee-edit/${item.id}`});
 	}
 
-	deleteEmployee(item) {
+	confirmDelete(item) {
+		this.setState({ selectItem: item })
+	}
 
+	deleteEmployee(item) {
+		const { startLoading, stopLoading, showMessage } = this.props;
+		fetch(buildUrl(`/employee/${item.id}`), { method: 'DELETE' })
+			.then(response => {
+				stopLoading();
+				if (response.code == '200') {
+					this.query();
+					showMessage('删除成功');
+				} else {
+					showMessage(response.message);
+				}
+			})
+			.catch(() => {
+				stopLoading();
+			});
 	}
 
 	showQRcode(item, event) {
@@ -133,9 +152,29 @@ class EmployeeList extends Component {
     });
 	}
 
+	handleClose(deleteStudent) { 
+		if (deleteStudent) {
+			this.deleteEmployee(this.state.selectItem);
+		}
+		this.setState({ selectItem: null });
+	}
+
 	render() {
-		const { name, phone, gradeId, classId, list, totalCount, page, open, qrCode, anchor } = this.state;
+		const { name, phone, gradeId, classId, list, totalCount, page, open, qrCode, anchor, selectItem } = this.state;
 		const { grade } = this.props;
+
+		const actions = [
+      <FlatButton
+        label="确认删除"
+        primary
+        onTouchTap={() => this.handleClose(true)}
+      />,
+      <FlatButton
+        label="取消"
+        onTouchTap={() => this.handleClose(false)}
+      />,
+    ];
+
 
 		const classes = this.getClasses(gradeId);	
 
@@ -199,7 +238,8 @@ class EmployeeList extends Component {
 					onTouchTap={() => this.query()}/>
 			</Paper>
 			<Paper style={{marginTop: '20px'}}>
-				<Table selectable={false}>
+				<Table selectable={false}
+					bodyStyle={{overflow: 'visible'}}>
 			    <TableHeader>
 			      <TableRow>
 			        <TableHeaderColumn>姓名</TableHeaderColumn>
@@ -208,7 +248,7 @@ class EmployeeList extends Component {
 			        <TableHeaderColumn></TableHeaderColumn>
 			      </TableRow>
 			    </TableHeader>
-			    <TableBody>
+			    <TableBody style>
 			    {
 			    	list.map((item, index) => {
 			    		const currentGrade = grade.filter((gradeItem) => gradeItem.id == item.gradeId);
@@ -228,7 +268,7 @@ class EmployeeList extends Component {
 				        <TableRowColumn>{item.name}</TableRowColumn>
 				        <TableRowColumn>{item.phone}</TableRowColumn>
 				        <TableRowColumn>{displayed}</TableRowColumn>
-				        <TableRowColumn style={{overflow: 'none'}}>
+				        <TableRowColumn style={{overflow: 'visible'}}>
 					        <IconButton tooltip="查看记录"
 					        	tooltipPosition="bottom-left"
 					        	onTouchTap={() => this.jumpToRecordList(item)}>
@@ -240,7 +280,7 @@ class EmployeeList extends Component {
 							    </IconButton>
 							    <IconButton tooltip="删除信息"
 							    	tooltipStyles={{zIndex: '2000'}}
-							    	onTouchTap={() => this.deleteEmployee(item)}>
+							    	onTouchTap={() => this.confirmDelete(item)}>
 							      <DeleteIcon />
 							    </IconButton>
 							    <IconButton tooltip="查看二维码"
@@ -266,6 +306,14 @@ class EmployeeList extends Component {
         >
         	<a href={qrCode} download><img src={qrCode} /></a>
         </Popover>
+        <Dialog
+          actions={actions}
+          modal={false}
+          open={this.state.selectItem != null}
+          onRequestClose={() => this.handleClose(false)}
+        >
+          {`您确定要删除${selectItem == null || selectItem.name}的信息？`}
+        </Dialog>
 			</Paper>
 		</div>
 	}
