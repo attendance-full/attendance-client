@@ -1,7 +1,8 @@
 import moment from 'moment';
+import config from '../config';
 
 export const serverDateToDateTime = (date) => {
-	if (! date || date.length> 0) {
+	if (! date || date.length <= 0) {
 		return '';
 	}
 	var date = moment(date);
@@ -9,7 +10,7 @@ export const serverDateToDateTime = (date) => {
 }
 
 export const serverDateToDate = (date) => {
-	if (! date || date.length> 0) {
+	if (! date || date.length <= 0) {
 		return '';
 	}
 	var date = moment(date);
@@ -29,3 +30,10 @@ export const urlSearchData = (searchString) => {
           return result;
       }, {});
 };
+
+export const renderQrUrl = (item) => {
+	if (item && item.phone) {
+		return `${config.serverRootUrl}/qrimage/${item.phone}.png`;
+	}
+	return '';
+}
