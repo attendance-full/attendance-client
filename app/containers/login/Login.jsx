@@ -32,7 +32,7 @@ class Login extends Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				phone: username,
+				username,
 				password
 			}),
 		}
