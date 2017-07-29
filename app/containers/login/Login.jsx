@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
 import { actions as appActions } from '../app';
 import { actions as loginActions } from './index';
+import md5 from 'md5';
 
 class Login extends Component {
 
@@ -33,7 +34,7 @@ class Login extends Component {
 			},
 			body: JSON.stringify({
 				username,
-				password
+				password: md5(password)
 			}),
 		}
 		fetch(buildUrl('/login'), options)
@@ -41,6 +42,7 @@ class Login extends Component {
 				stopLoading();
 				if (response.code == '200') {
 					valueChange('password', '');
+					localStorage.setItem('token', response.data.token);
 					history.push({pathname: '/dashboard/employee-list'});
 				} else {
 					showMessage(response.message);
