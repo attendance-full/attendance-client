@@ -43,6 +43,12 @@ class App extends Component {
       });
   }
 
+  componentWillReceiveProps(newProps) {
+    // if (newProps.message == '请先登录') {
+    //   this.props.history.push('/');
+    // }
+  }
+
   handleRequestClose() {
 
   }

@@ -21,6 +21,8 @@ class EmployeeEdit extends Component {
 	componentDidMount() {
 		if (this.idEdit()) {
 			this.getInfo()
+		} else {
+			this.props.clearEditPage();
 		}
 	}
 

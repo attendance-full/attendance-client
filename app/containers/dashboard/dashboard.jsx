@@ -20,6 +20,7 @@ import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
 import { fetch, buildUrl } from '../../components/api/Api';
 import DatePicker from 'material-ui/DatePicker';
+import ChangePassword from './password';
 
 class Dashboard extends Component {
 
@@ -30,30 +31,12 @@ class Dashboard extends Component {
   }
 
   logout() {
-  	const {
-  		startLoading,
-  		stopLoading,
-  		showMessage
-  	} = this.props;
+  	localStorage.removeItem('token')	;
+  	this.props.history.push({pathname: '/'});
+  }
 
-  	startLoading();
-  	const options = {
-			method: 'GET',
-			credentials: 'include',
-		}
-		fetch(buildUrl('/logout'), options)
-			.then(response => {
-				stopLoading();
-				if (response.code == '200') {
-					valueChange('password', '');
-					history.push({pathname: '/'});
-				} else {
-					showMessage(response.message);
-				}
-			})
-			.catch(() => {
-				stopLoading();
-			});
+  changePassword() {
+  	this.props.history.push({pathname: '/dashboard/change-password'});
   }
 
 	renderRightElement() {
@@ -64,6 +47,7 @@ class Dashboard extends Component {
 		    targetOrigin={{horizontal: 'right', vertical: 'top'}}
 		    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
 		  >
+		  	<MenuItem onTouchTap={() => this.changePassword() } primaryText="修改密码" />
 		    <MenuItem onTouchTap={() => this.logout() } primaryText="登出" />
 	  </IconMenu>
 	}
@@ -113,6 +97,7 @@ class Dashboard extends Component {
       	<Route path={`${match.path}/employee-view`} component={EmployeeView} />
       	<Route path={`${match.path}/employee-edit/:id`} component={EmployeeEdit} />
       	<Route path={`${match.path}/record-list`} component={RecordList} />
+      	<Route path={`${match.path}/change-password`} component={ChangePassword} />
       </div>
 		</div>
 	}
