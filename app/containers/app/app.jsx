@@ -20,29 +20,6 @@ class App extends Component {
     super(props);
   }
 
-  componentDidMount() {
-    const { loadGradeSuccess, loadClassesSuccess } = this.props;
-    const options = {
-      method: 'GET',
-    }
-    fetch(buildUrl('/settings/grade'), options)
-      .then(response => {
-        if (response.code == '200') {
-          loadGradeSuccess(response.data);
-          fetch(buildUrl('/settings/class'), options)
-            .then(response => {
-              if (response.code == '200') {
-                loadClassesSuccess(response.data);
-              }
-            })
-            .catch(() => {
-            });
-        }
-      })
-      .catch(() => {
-      });
-  }
-
   componentWillReceiveProps(newProps) {
     // if (newProps.message == '请先登录') {
     //   this.props.history.push('/');
@@ -86,8 +63,6 @@ class App extends Component {
 App.propTypes = {
   loading: React.PropTypes.bool,
   dismissMessage: React.PropTypes.func,
-  loadGradeSuccess: React.PropTypes.func,
-  loadClassesSuccess: React.PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
@@ -97,8 +72,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     dismissMessage: (message) => dispatch(appActions.dismissMessage(message)),
-    loadGradeSuccess: (grade) => dispatch(appActions.loadGradeSuccess(grade)),
-    loadClassesSuccess: (classes) => dispatch(appActions.loadClassesSuccess(classes))
   }
 };
 

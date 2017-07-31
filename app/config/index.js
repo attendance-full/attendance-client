@@ -1,5 +1,5 @@
 const config = {
-    serviceUrl: "http://localhost:7001/api",
+    serviceUrl: "http://118.190.175.30/api",
     serverRootUrl: "http://118.190.175.30"
 }
 

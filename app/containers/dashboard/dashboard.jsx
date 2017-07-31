@@ -21,6 +21,7 @@ import { connect} from 'react-redux';
 import { fetch, buildUrl } from '../../components/api/Api';
 import DatePicker from 'material-ui/DatePicker';
 import ChangePassword from './password';
+import StructureManager from './structure/structure_manage/';
 
 class Dashboard extends Component {
 
@@ -28,6 +29,29 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {open: false};
+  }
+
+  componentDidMount() {
+    const { loadGradeSuccess, loadClassesSuccess } = this.props;
+    const options = {
+      method: 'GET',
+    }
+    fetch(buildUrl('/settings/grade'), options)
+      .then(response => {
+        if (response.code == '200') {
+          loadGradeSuccess(response.data);
+          fetch(buildUrl('/settings/class'), options)
+            .then(response => {
+              if (response.code == '200') {
+                loadClassesSuccess(response.data);
+              }
+            })
+            .catch(() => {
+            });
+        }
+      })
+      .catch(() => {
+      });
   }
 
   logout() {
@@ -82,15 +106,18 @@ class Dashboard extends Component {
 	      <div className='menu_title'>
 	      	标题
 	      </div>
-        <MenuItem primaryText='人员'
+        <MenuItem primaryText='人员管理'
         	innerDivStyle={this.checkActive('/employee-list')}
         	onTouchTap={() => history.push({pathname: `${match.path}/employee-list`})} />
         <MenuItem primaryText='创建/修改'
         	innerDivStyle={Object.assign({}, {paddingLeft: '40px'}, this.checkActive('/employee-edit'))}
         	onTouchTap={() => history.push({pathname: `${match.path}/employee-edit/-1`})} />
-        <MenuItem primaryText='记录'
+        <MenuItem primaryText='记录信息'
         	innerDivStyle={this.checkActive('/record-list')}
         	onTouchTap={() => history.push({pathname: `${match.path}/record-list`})} />
+        <MenuItem primaryText='班级管理'
+        	innerDivStyle={this.checkActive('/structure-manage')}
+        	onTouchTap={() => history.push({pathname: `${match.path}/structure-manage`})} />
       </Drawer>
       <div className='dashboard_container'>
       	<Route exact path={`${match.path}/employee-list`} component={EmployeeList} />
@@ -98,6 +125,7 @@ class Dashboard extends Component {
       	<Route path={`${match.path}/employee-edit/:id`} component={EmployeeEdit} />
       	<Route path={`${match.path}/record-list`} component={RecordList} />
       	<Route path={`${match.path}/change-password`} component={ChangePassword} />
+      	<Route path={`${match.path}/structure-manage`} component={StructureManager} />
       </div>
 		</div>
 	}
@@ -107,6 +135,8 @@ Dashboard.propTypes = {
 	startLoading: React.PropTypes.func,
 	stopLoading: React.PropTypes.func,
 	showMessage: React.PropTypes.func,
+	loadGradeSuccess: React.PropTypes.func,
+  loadClassesSuccess: React.PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
@@ -118,6 +148,8 @@ const mapDispatchToProps = (dispatch) => {
   	startLoading: () => dispatch(appActions.startLoading()),
   	stopLoading: () => dispatch(appActions.stopLoading()),
   	showMessage: (message) => dispatch(appActions.showMessage(message)),
+  	loadGradeSuccess: (grade) => dispatch(appActions.loadGradeSuccess(grade)),
+    loadClassesSuccess: (classes) => dispatch(appActions.loadClassesSuccess(classes))
   }
 }
 
