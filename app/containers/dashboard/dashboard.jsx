@@ -104,7 +104,7 @@ class Dashboard extends Component {
         className='pc_container'
       >
 	      <div className='menu_title'>
-	      	标题
+	      	温州茂隆
 	      </div>
         <MenuItem primaryText='人员管理'
         	innerDivStyle={this.checkActive('/employee-list')}

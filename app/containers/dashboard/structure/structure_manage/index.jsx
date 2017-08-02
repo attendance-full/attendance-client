@@ -8,6 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { actions as appActions } from '../../../app';
 import MenuItem from 'material-ui/MenuItem';
 import { fetch, buildUrl } from '../../../../components/api/Api';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 class StructureManage extends Component {
 	constructor(props) {
@@ -18,7 +20,8 @@ class StructureManage extends Component {
 			newClassGradeId: '',
 			newClassName: '',
 			delClassGradeId: '',
-			delClassId: ''
+			delClassId: '',
+			selectItem: null
 		}
 	}
 
@@ -48,7 +51,7 @@ class StructureManage extends Component {
 			this.props.showMessage('请选择要删除的班级');
 			return;
 		}
-		this.operateActionSubmit('/structure/del-grade', { id: delGradeId });
+		this.setState({ selectItem: { displayName: '该年纪', id: delGradeId, url: '/structure/del-grade' } });
 	}
 
 	addClass() {
@@ -64,10 +67,9 @@ class StructureManage extends Component {
 		const { delClassId } = this.state;
 		if (delClassId.length == 0) {
 			this.props.showMessage('请选择要删除的班级');
-			refreshStrusture();
 			return;
 		}
-		this.operateActionSubmit('/structure/del-class', { id: delClassId });
+		this.setState({ selectItem: { displayName: '该班级', id: delClassId, url: '/structure/del-class' } });
 	}
 
 	operateActionSubmit(action, body) {
@@ -108,6 +110,8 @@ class StructureManage extends Component {
             .then(response => {
               if (response.code == '200') {
                 loadClassesSuccess(response.data);
+              } else {
+              	showMessage(response.message);
               }
             })
             .catch(() => {
@@ -118,10 +122,28 @@ class StructureManage extends Component {
       });
 	}
 
+	handleClose(deleteStudent) { 
+		if (deleteStudent) {
+			this.operateActionSubmit(this.state.selectItem.url, { id: this.state.selectItem.id });
+		}
+		this.setState({ selectItem: null });
+	}
+
 
 	render() {
-		const { delGradeId, newClassGradeId, delClassGradeId, delClassId } = this.state;
+		const { delGradeId, newClassGradeId, delClassGradeId, delClassId, selectItem } = this.state;
 		const { grade } = this.props;
+		const actions = [
+      <FlatButton
+        label="确认删除"
+        primary
+        onTouchTap={() => this.handleClose(true)}
+      />,
+      <FlatButton
+        label="取消"
+        onTouchTap={() => this.handleClose(false)}
+      />,
+    ];
 		return <div>
 			<Card style={{marginBottom: '20px', padding: '0 20px'}}>
 				<CardTitle title='年级添加' />
@@ -211,6 +233,14 @@ class StructureManage extends Component {
 		    	<RaisedButton label="删除" primary onTouchTap={() => this.delClass()} />
 		    </CardActions>
 			</Card>
+			<Dialog
+          actions={actions}
+          modal={false}
+          open={this.state.selectItem != null}
+          onRequestClose={() => this.handleClose(false)}
+        >
+          {`您确定要删除${selectItem == null || selectItem.displayName}的信息？ ${selectItem == null || selectItem.displayName}下面的学生也会被删除！`}
+        </Dialog>
 		</div>;
 	}
 }
