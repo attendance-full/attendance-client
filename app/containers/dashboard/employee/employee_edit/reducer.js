@@ -9,7 +9,9 @@ const defaultState = {
 	phone: '',
 	gradeId: 1,
 	classId: 1,
-	rfid: ''
+	rfid: '',
+	observedPhone: '',
+	isObserved: 0
 }
 
 export default (state = defaultState, action) => {
@@ -25,7 +27,9 @@ export default (state = defaultState, action) => {
 				phone: '',
 				gradeId: 1,
 				classId: 1,
-				rfid: ''
+				rfid: '',
+				observedPhone: '',
+				isObserved: 0
 			});
 		case INIT_EDIT_INFO_ACTION:
 			return Object.assign({}, state, {

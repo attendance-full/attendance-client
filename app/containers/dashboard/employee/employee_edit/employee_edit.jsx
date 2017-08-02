@@ -11,6 +11,7 @@ import { actions as appActions } from '../../../app';
 import { fetch, buildUrl } from '../../../../components/api/Api';
 import IconButton from 'material-ui/IconButton';
 import CachedHome from 'material-ui/svg-icons/action/cached';
+import Checkbox from 'material-ui/Checkbox';
 
 
 class EmployeeEdit extends Component {
@@ -56,6 +57,8 @@ class EmployeeEdit extends Component {
 			gradeId,
 			classId,
 			rfid,
+			observedPhone,
+			isObserved,
 			history,
 			match,
 			showMessage,
@@ -73,6 +76,11 @@ class EmployeeEdit extends Component {
 			return;
 		}
 
+		if (!(/^1[34578]\d{9}$/.test(observedPhone))) {
+			showMessage('请输入正确的手机号');
+			return;
+		}
+
 		const options = {
 			method: this.idEdit() ? 'PUT' : 'POST',
 			headers: {
@@ -83,7 +91,9 @@ class EmployeeEdit extends Component {
 				phone,
 				gradeId,
 				classId,
-				rfid
+				rfid,
+				observedPhone,
+				isObserved
 			}),
 		}
 		startLoading();
@@ -146,7 +156,9 @@ class EmployeeEdit extends Component {
 			classId,
 			rfid,
 			valueChange,
-			grade
+			grade,
+			observedPhone,
+			isObserved
 		} = this.props;
 
 		const classes = this.getClasses(gradeId);
@@ -196,22 +208,34 @@ class EmployeeEdit extends Component {
           	classes.map((item, index) => <MenuItem key={index} value={item.id} primaryText={item.displayName} />)
           }
         </SelectField>
+        <TextField
+		      hintText='请输入家长手机号'
+		      floatingLabelText='家长手机号'
+		      value={observedPhone}
+		      onChange={(e) => valueChange('observedPhone', e.target.value)}
+		      fullWidth
+		    /><br />
+		    <Checkbox
+		      label="是否接受信息"
+		      checked={isObserved == 1}
+		      style={{ marginTop: '10px' }}
+		      onCheck={() => valueChange('isObserved', 1 - isObserved)}
+		    />
         <div style={{height: '72px'}}>
-        <div style={{width: '85%', float: 'left'}}>
-	        <TextField
-			      hintText='请输入学号'
-			      floatingLabelText='卡号'
-			      value={rfid}
-			      disabled
-			      onChange={(e) => valueChange('phone', e.target.value)}
-			      fullWidth
-			    />
-		    </div>
-		    <IconButton style={{marginTop: '25px'}}
-		    	tooltip="点击获取卡号"
-		    	onTouchTap={() => this.getNewestRFID()}>
-		      <CachedHome />
-		    </IconButton>
+	        <div style={{width: '85%', float: 'left'}}>
+		        <TextField
+				      hintText='请获取学生卡号'
+				      floatingLabelText='卡号'
+				      value={rfid}
+				      disabled
+				      fullWidth
+				    />
+			    </div>
+			    <IconButton style={{marginTop: '25px'}}
+			    	tooltip="点击获取卡号"
+			    	onTouchTap={() => this.getNewestRFID()}>
+			      <CachedHome />
+			    </IconButton>
 		    </div>
 	    </CardText>
 	    <CardActions style={{margin: 'auto', paddingBottom: '20px'}}>
@@ -227,6 +251,8 @@ EmployeeEdit.propTypes = {
 	phone: React.PropTypes.string,
 	gradeId: React.PropTypes.number,
 	classId: React.PropTypes.number,
+	observedPhone: React.PropTypes.string,
+	isObserved: React.PropTypes.number,
 	valueChange: React.PropTypes.func,
 	grade: React.PropTypes.array,
 	showMessage: React.PropTypes.func,

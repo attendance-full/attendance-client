@@ -26,7 +26,7 @@ class Oauth extends Component {
 		});
 	}
 
-	fetchData() {		
+	fetchData() {
 		const query = urlSearchData(this.props.location.search);
 		if (query) {
 			const { startLoading, showMessage } = this.props;
