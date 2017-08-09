@@ -222,20 +222,14 @@ class EmployeeEdit extends Component {
 		      onCheck={() => valueChange('isObserved', 1 - isObserved)}
 		    />
         <div style={{height: '72px'}}>
-	        <div style={{width: '85%', float: 'left'}}>
+	        <div>
 		        <TextField
-				      hintText='请获取学生卡号'
+				      hintText='请刷卡'
 				      floatingLabelText='卡号'
 				      value={rfid}
-				      disabled
 				      fullWidth
 				    />
 			    </div>
-			    <IconButton style={{marginTop: '25px'}}
-			    	tooltip="点击获取卡号"
-			    	onTouchTap={() => this.getNewestRFID()}>
-			      <CachedHome />
-			    </IconButton>
 		    </div>
 	    </CardText>
 	    <CardActions style={{margin: 'auto', paddingBottom: '20px'}}>
