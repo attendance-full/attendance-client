@@ -65,8 +65,14 @@ class Oauth extends Component {
 		const { stopLoading } = this.props;
 		if (!isLoadingWechat && !isLoadingEmployee) {
 			stopLoading();
-			const result = employee.observer.filter((item) => item.openId == wechat.openId);
-			if (result.length > 0) {
+			var isExist = false;
+			employee.observer.map((item) => {
+				if (item.openid == wechat.openid) {
+					isExist = true;
+					return
+				}
+			});
+			if (isExist == true) {
 				this.setState({ bindSuc: true });
 			}
 		}
@@ -87,14 +93,16 @@ class Oauth extends Component {
 		fetch(buildUrl(`/wechat/bind`), options)
 			.then((response) => {
 				if (response.code == 200) {
-					this.setState({ indSuc: true });
+					this.setState({ isLoadingWechat: true, bindSuc: true }, ()=> this.checkEmployeeBind());
 				} else {
 					showMessage(response.message);
-					this.setState({ isLoadingWechat: false });
+					this.setState({ isLoadingWechat: false }, ()=> this.checkEmployeeBind());
 				}
+				stopLoading();
 			})
 			.catch(() => {
-				this.setState({ isLoadingWechat: false });
+				this.setState({ isLoadingWechat: false }, ()=> this.checkEmployeeBind());
+				stopLoading();
 			})
 	}
 

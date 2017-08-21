@@ -37,6 +37,8 @@ export default (state = defaultState, action) => {
 				phone: action.info.phone,
 				gradeId: action.info.gradeId,
 				classId: action.info.classId,
+				observedPhone: action.info.observedPhone,
+				isObserved: action.info.isObserved,
 				rfid: action.info.RFID
 			});
 		default:
