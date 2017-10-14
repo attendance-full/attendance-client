@@ -73,7 +73,7 @@ class StructureManage extends Component {
 	}
 
 	operateActionSubmit(action, body) {
-		const { startLoading, stopLoading, showMessage } = this.props;
+		const { startLoading, stopLoading, showMessage, match } = this.props;
 		const options = {
 			method: 'POST',
 			headers: {
@@ -82,7 +82,7 @@ class StructureManage extends Component {
 			body: JSON.stringify(body),
 		}
 		startLoading();
-		fetch(buildUrl(action), options)
+		fetch(buildUrl(action, match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {
@@ -98,15 +98,15 @@ class StructureManage extends Component {
 	}
 
 	refreshStrusture() {
-		const { loadGradeSuccess, loadClassesSuccess } = this.props;
+		const { loadGradeSuccess, loadClassesSuccess, match } = this.props;
     const options = {
       method: 'GET',
     }
-    fetch(buildUrl('/settings/grade'), options)
+    fetch(buildUrl('/settings/grade', match), options)
       .then(response => {
         if (response.code == '200') {
           loadGradeSuccess(response.data);
-          fetch(buildUrl('/settings/class'), options)
+          fetch(buildUrl('/settings/class', match), options)
             .then(response => {
               if (response.code == '200') {
                 loadClassesSuccess(response.data);

@@ -3,7 +3,7 @@ import isomorphicFetch from 'isomorphic-fetch';
 import is from 'is_js';
 import config from '../../config';
 
-export const buildUrl = (path) => config.serviceUrl + path;
+export const buildUrl = (path, match) => config.serverRootUrl + '/' +match.params.prefix + '/api' + path;
 
 class FetchTimedOutError extends Error { }
 

@@ -33,10 +33,10 @@ class EmployeeEdit extends Component {
 			showMessage,
 			stopLoading,
 			startLoading,
-			initEditInfo
+			initEditInfo,
 		} = this.props;
 		startLoading();
-		fetch(buildUrl(`/employee/${match.params.id}`), {method: 'GET'})
+		fetch(buildUrl(`/employee/${match.params.id}`, match), {method: 'GET'})
 			.then((response) => {
 				stopLoading();
 				if (response.code == 200) {
@@ -97,7 +97,7 @@ class EmployeeEdit extends Component {
 			}),
 		}
 		startLoading();
-		fetch(buildUrl(this.idEdit() ? `/employee/${match.params.id}` : '/employee'), options)
+		fetch(buildUrl(this.idEdit() ? `/employee/${match.params.id}` : '/employee', match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {
@@ -118,12 +118,12 @@ class EmployeeEdit extends Component {
 	}
 
 	getNewestRFID() {
-		const { startLoading, stopLoading, showMessage, valueChange } = this.props;
+		const { startLoading, stopLoading, showMessage, valueChange, match } = this.props;
 		const options = {
 			method: 'GET',
 		};
 		startLoading();
-		fetch(buildUrl('/rfid'), options)
+		fetch(buildUrl('/rfid', match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == 200) {

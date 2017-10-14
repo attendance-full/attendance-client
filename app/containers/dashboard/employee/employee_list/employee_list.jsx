@@ -55,7 +55,7 @@ class EmployeeList extends Component {
 
     query() {
         const {name, phone, gradeId, classId, page} = this.state;
-        const {startLoading, stopLoading, showMessage} = this.props;
+        const {startLoading, stopLoading, showMessage, match} = this.props;
 
         const options = {
             method: 'POST',
@@ -72,7 +72,7 @@ class EmployeeList extends Component {
             }),
         }
         startLoading();
-        fetch(buildUrl('/employee/query'), options)
+        fetch(buildUrl('/employee/query', match), options)
             .then(response => {
                 stopLoading();
                 if (response.code == '200') {
@@ -122,8 +122,8 @@ class EmployeeList extends Component {
     }
 
     deleteEmployee(item) {
-        const {startLoading, stopLoading, showMessage} = this.props;
-        fetch(buildUrl(`/employee/${item.id}`), {method: 'DELETE'})
+        const {startLoading, stopLoading, showMessage, match} = this.props;
+        fetch(buildUrl(`/employee/${item.id}`, match), {method: 'DELETE'})
             .then(response => {
                 stopLoading();
                 if (response.code == '200') {

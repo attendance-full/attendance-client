@@ -41,7 +41,7 @@ ReactDOM.render(
   (<BrowserRouter>
   	<Provider store={store}>
       <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-  		  <Route path="/" component={App} />
+  		  <Route path="/:prefix" component={App} />
       </MuiThemeProvider>
   	</Provider>
   </BrowserRouter>),

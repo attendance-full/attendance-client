@@ -54,7 +54,7 @@ class RecordList extends Component {
 
     query() {
         const {startDate, endDate, name, phone, gradeId, classId, page} = this.state;
-        const {startLoading, stopLoading} = this.props;
+        const {startLoading, stopLoading, match} = this.props;
 
         const options = {
             method: 'POST',
@@ -73,7 +73,7 @@ class RecordList extends Component {
             }),
         }
         startLoading();
-        fetch(buildUrl('/record'), options)
+        fetch(buildUrl('/record', match), options)
             .then(response => {
                 stopLoading();
                 if (response.code == '200') {

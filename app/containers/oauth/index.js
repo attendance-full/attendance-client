@@ -29,10 +29,10 @@ class Oauth extends Component {
 	fetchData() {
 		const query = urlSearchData(this.props.location.search);
 		if (query) {
-			const { startLoading, showMessage } = this.props;
+			const { startLoading, showMessage, match } = this.props;
 			const { state, code } = query;
 			startLoading();
-			fetch(buildUrl(`/employee/${state}`), {method: 'GET'})
+			fetch(buildUrl(`/employee/${state}`, match), {method: 'GET'})
 				.then((response) => {
 					if (response.code == 200) {
 						this.setState({ employee: response.data, isLoadingEmployee: false }, ()=> this.checkEmployeeBind());
@@ -45,7 +45,7 @@ class Oauth extends Component {
 					this.setState({ isLoadingEmployee: false }, ()=> this.checkEmployeeBind());
 				})
 
-			fetch(buildUrl(`/wechat/oauth?code=${code}`), {method: 'GET'})
+			fetch(buildUrl(`/wechat/oauth?code=${code}`, match), {method: 'GET'})
 				.then((response) => {
 					if (response.code == 200) {
 						this.setState({ wechat: response.data, isLoadingWechat: false }, ()=> this.checkEmployeeBind());
@@ -80,7 +80,7 @@ class Oauth extends Component {
 
 	bind() {
 		const { employee, wechat } = this.state;
-		const { startLoading, showMessage, stopLoading } = this.props;
+		const { startLoading, showMessage, stopLoading, match } = this.props;
 		wechat.employeeId = employee.id;
 		startLoading();
 		const options = {
@@ -90,7 +90,7 @@ class Oauth extends Component {
 			},
 			body: JSON.stringify(wechat),
 		}
-		fetch(buildUrl(`/wechat/bind`), options)
+		fetch(buildUrl(`/wechat/bind`, match), options)
 			.then((response) => {
 				if (response.code == 200) {
 					this.setState({ isLoadingWechat: true, bindSuc: true }, ()=> this.checkEmployeeBind());

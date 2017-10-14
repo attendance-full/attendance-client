@@ -23,6 +23,7 @@ class Login extends Component {
 			startLoading,
 			stopLoading,
 			history,
+            match,
 			showMessage,
 			valueChange
 		} = this.props;
@@ -37,7 +38,8 @@ class Login extends Component {
 				password: md5(password)
 			}),
 		}
-		fetch(buildUrl('/login'), options)
+		console.log(match);
+		fetch(buildUrl('/login', match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {

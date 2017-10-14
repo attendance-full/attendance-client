@@ -17,7 +17,7 @@ class ChangePassword extends Component {
 
 	submit() {
 		const { oldPassword, newPassword, confirmPassword } = this.state;
-		const { startLoading, stopLoading, showMessage } = this.props;
+		const { startLoading, stopLoading, showMessage, match } = this.props;
 		if (oldPassword.length === 0) {
 			showMessage('请输入旧密码');
 			return;
@@ -49,7 +49,7 @@ class ChangePassword extends Component {
 				newPassword: md5(newPassword)
 			}),
 		}
-		fetch(buildUrl('/change-password'), options)
+		fetch(buildUrl('/change-password', match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {

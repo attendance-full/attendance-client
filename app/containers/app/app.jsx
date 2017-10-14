@@ -6,14 +6,12 @@ import {
 } from 'react-router-dom';
 import { Login } from '../login';
 import Oauth from '../oauth';
-import BusinessCard from '../businesscard';
 import { Dashboard } from '../dashboard';
 import { bindActionCreators } from 'redux';
 import { connect} from 'react-redux';
 import Snackbar from 'material-ui/Snackbar';
 import { actions as appActions } from './index';
 import CircularProgress from 'material-ui/CircularProgress';
-import { fetch, buildUrl } from '../../components/api/Api';
 
 
 class App extends Component {
@@ -36,7 +34,8 @@ class App extends Component {
       open,
       loading,
       message,
-      dismissMessage
+      dismissMessage,
+      match
     } = this.props;
     var loadingPanel = null;
     if (loading) {
@@ -44,6 +43,7 @@ class App extends Component {
         <CircularProgress className='loading_icon' size={80} thickness={5} />
       </div>;
     }
+    console.log(match);
     return (
       <div>
         {loadingPanel}
@@ -53,10 +53,9 @@ class App extends Component {
           autoHideDuration={2000}
           onRequestClose={() => dismissMessage()}
         />
-        <Route exact path="/" component={Login} />
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/oauth" component={Oauth} />
-        <Route path="/businesscard" component={BusinessCard}/>
+        <Route exact path={`${match.path}/`} component={Login} />
+        <Route path={`${match.path}/dashboard`} component={Dashboard} />
+        <Route path={`${match.path}/oauth`} component={Oauth} />
       </div>
     );
   }
