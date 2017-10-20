@@ -43,7 +43,6 @@ class App extends Component {
         <CircularProgress className='loading_icon' size={80} thickness={5} />
       </div>;
     }
-    console.log(match);
     return (
       <div>
         {loadingPanel}

@@ -56,11 +56,13 @@ class Dashboard extends Component {
 
   logout() {
   	localStorage.removeItem('token')	;
-  	this.props.history.push({pathname: '/'});
+    const { match } = this.props;
+  	this.props.history.push({pathname: `/${match.params.prefix}`});
   }
 
   changePassword() {
-  	this.props.history.push({pathname: '/dashboard/change-password'});
+    const { match } = this.props;
+  	this.props.history.push({pathname: `/${match.params.prefix}/dashboard/change-password`});
   }
 
 	renderRightElement() {
@@ -89,7 +91,26 @@ class Dashboard extends Component {
 
 	render() {
 		const { open } = this.state;
-		const { history, match } = this.props;
+		const { history, match, username } = this.props;
+    var menu = <MenuItem primaryText='记录信息'
+            innerDivStyle={this.checkActive('/record-list')}
+            onTouchTap={() => history.push({pathname: `/${match.params.prefix}/dashboard/record-list`})} />
+    if (username == 'admin') {
+      menu = <div>
+          <MenuItem primaryText='记录信息'
+              innerDivStyle={this.checkActive('/record-list')}
+              onTouchTap={() => history.push({pathname: `/${match.params.prefix}/dashboard/record-list`})} />
+          <MenuItem primaryText='人员管理'
+            innerDivStyle={this.checkActive('/employee-list')}
+            onTouchTap={() => history.push({pathname: `/${match.params.prefix}/dashboard/employee-list`})} />
+          <MenuItem primaryText='创建/修改'
+            innerDivStyle={Object.assign({}, {paddingLeft: '40px'}, this.checkActive('/employee-edit'))}
+            onTouchTap={() => history.push({pathname: `/${match.params.prefix}/dashboard/employee-edit/-1`})} />
+          <MenuItem primaryText='班级管理'
+            innerDivStyle={this.checkActive('/structure-manage')}
+            onTouchTap={() => history.push({pathname: `/${match.params.prefix}/dashboard/structure-manage`})} />
+        </div>
+    }
 		return <div>
 			<AppBar
 		    title="Title"
@@ -104,26 +125,15 @@ class Dashboard extends Component {
         className='pc_container'
       >
 	      <div className='menu_title'>
-	      	温州茂隆
+	      	微校徽
 	      </div>
-        <MenuItem primaryText='人员管理'
-        	innerDivStyle={this.checkActive('/employee-list')}
-        	onTouchTap={() => history.push({pathname: `${match.path}/employee-list`})} />
-        <MenuItem primaryText='创建/修改'
-        	innerDivStyle={Object.assign({}, {paddingLeft: '40px'}, this.checkActive('/employee-edit'))}
-        	onTouchTap={() => history.push({pathname: `${match.path}/employee-edit/-1`})} />
-        <MenuItem primaryText='记录信息'
-        	innerDivStyle={this.checkActive('/record-list')}
-        	onTouchTap={() => history.push({pathname: `${match.path}/record-list`})} />
-        <MenuItem primaryText='班级管理'
-        	innerDivStyle={this.checkActive('/structure-manage')}
-        	onTouchTap={() => history.push({pathname: `${match.path}/structure-manage`})} />
+        {menu}
       </Drawer>
       <div className='dashboard_container'>
+        <Route path={`${match.path}/record-list`} component={RecordList} />
       	<Route exact path={`${match.path}/employee-list`} component={EmployeeList} />
       	<Route path={`${match.path}/employee-view`} component={EmployeeView} />
       	<Route path={`${match.path}/employee-edit/:id`} component={EmployeeEdit} />
-      	<Route path={`${match.path}/record-list`} component={RecordList} />
       	<Route path={`${match.path}/change-password`} component={ChangePassword} />
       	<Route path={`${match.path}/structure-manage`} component={StructureManager} />
       </div>
@@ -132,6 +142,7 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
+  username: React.PropTypes.string,
 	startLoading: React.PropTypes.func,
 	stopLoading: React.PropTypes.func,
 	showMessage: React.PropTypes.func,
@@ -140,7 +151,10 @@ Dashboard.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  const username = state.login.username;
+  return {
+    username
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {

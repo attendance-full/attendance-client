@@ -23,7 +23,7 @@ class Login extends Component {
 			startLoading,
 			stopLoading,
 			history,
-            match,
+      match,
 			showMessage,
 			valueChange
 		} = this.props;
@@ -38,14 +38,13 @@ class Login extends Component {
 				password: md5(password)
 			}),
 		}
-		console.log(match);
 		fetch(buildUrl('/login', match), options)
 			.then(response => {
 				stopLoading();
 				if (response.code == '200') {
 					valueChange('password', '');
 					localStorage.setItem('token', response.data.token);
-					history.push({pathname: '/dashboard/employee-list'});
+					history.push({pathname: `/${match.params.prefix}/dashboard/record-list`});
 				} else {
 					showMessage(response.message);
 				}
