@@ -143,7 +143,7 @@ class EmployeeList extends Component {
         this.setState({
             open: true,
             anchor: event.currentTarget,
-            qrCode: renderQrUrl(item)
+            qrCode: renderQrUrl(item, this.props.match)
         });
     }
 
